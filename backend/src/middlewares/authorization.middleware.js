@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 "use strict";
 // Autorizacion - Comprobar el rol del usuario
 const User = require("../models/user.model.js");
@@ -31,7 +32,28 @@ async function isAdmin(req, res, next) {
     handleError(error, "authorization.middleware -> isAdmin");
   }
 }
+async function isEncargado(req, res, next) {
+  try {
+    const user = await User.findOne({ email: req.email });
+    const roles = await Role.find({ _id: { $in: user.roles } });
+    for (let i = 0; i < roles.length; i++) {
+      if (roles[i].name === "encargado") {
+        next();
+        return;
+      }
+    }
+    return respondError(
+      req,
+      res,
+      401,
+      "Se requiere un rol de encargado para realizar esta acción",
+    );
+  } catch (error) {
+    handleError(error, "authorization.middleware -> isEncargado");
+  }
+}
 
 module.exports = {
   isAdmin,
+  isEncargado,
 };

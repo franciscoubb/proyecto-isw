@@ -18,11 +18,13 @@
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
     "dotenv": "16.3.1",
+    "excel4node": "^1.8.2",
     "express": "4.18.2",
     "joi": "17.10.2",
     "jsonwebtoken": "9.0.2",
     "mongoose": "7.5.2",
-    "morgan": "1.10.0"
+    "morgan": "1.10.0",
+    "nodemailer": "^6.9.5"
   },
   "devDependencies": {
     "eslint": "8.50.0",
