@@ -1,4 +1,9 @@
-# Template proyecto ingeniería de software
+# Proyecto ingeniería de software
+-integrantes: 
+Daniel Gallegos
+Maria Concha
+Gabriela Michocan
+Francisco Zambrano
 
 ## Descripción
 
