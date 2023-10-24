@@ -1,5 +1,5 @@
 # Proyecto ingeniería de software
--integrantes: 
+- Integrantes: 
 Daniel Gallegos
 Maria Concha
 Gabriela Michocan
