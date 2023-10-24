@@ -1,13 +1,14 @@
 # Proyecto ingeniería de software
 - Integrantes: 
-Daniel Gallegos
-Maria Concha
-Gabriela Michocan
+Daniel Gallegos,
+Maria Concha,
+Gabriela Michocan,
 Francisco Zambrano
 
 ## Descripción
 
-- Esta es la base de codigo para el proyecto de ingeniería de software
+- Este proyecto trata sobre administratar el sistema de pagos.
+- En este proyecto ulilizamos el template de Camilo Saez.
 
 ## [Ver el backend](./backend/Backend.md)
 ## [Ver el frontend](./frontend/Frontend.md)
