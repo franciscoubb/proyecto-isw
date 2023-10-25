@@ -1,9 +1,4 @@
 # Proyecto ingeniería de software
-- Integrantes: 
-Daniel Gallegos,
-Maria Concha,
-Gabriela Michocan,
-Francisco Zambrano
 
 ## Descripción
 
