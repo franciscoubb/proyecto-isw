@@ -6,9 +6,6 @@ const express = require("express");
 const misDeudasController = require("../controllers/misDeudas.controller.js");
 
 
-/** Middlewares de autorización */
-// const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
-
 /** Middleware de autenticación */
 const { verifyRUTToken } = require("../middlewares/authentication.middleware.js");
 
@@ -16,13 +13,9 @@ const { verifyRUTToken } = require("../middlewares/authentication.middleware.js"
 const router = express.Router();
 
 router.use(verifyRUTToken);
-// Define las rutas para los deudores
-// router.post("/", deudorController.createDeudor);
+// Define las rutas para los ciudadanos deudores
+router.post("/", misDeudasController.createPago);
 router.get("/", misDeudasController.getMisDeudas);
-// router.get("/:id", deudorController);
-// router.put("/:id", deudorController);
-// router.delete("/:id", deudorController);
-
-// router.get("/pago/comprobante", misDeudasController.getComprobantePago);
+router.get("/:id", misDeudasController.getMisDeudasByid);
 
 module.exports = router;
