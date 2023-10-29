@@ -1,86 +1,88 @@
 "use strict";
-// const DeudorService = require("../services/deudor.sevice");
-// const { deudorBodySchema } = require("../schema/deudor.schema");
-const PDF = require("pdfkit-construct");
+const { handleError } = require("../utils/errorHandler");
+const { respondSuccess, respondError } = require("../utils/resHandler");
+const Cobro = require("../models/cobro.model.js");
+const { cobroIdSchema } = require("../schema/cobro.schema.js");
+const Pago = require("../models/pago.model");
+const { pagoBodySchema } = require("../schema/pago.schema.js");
 
 /**
- * Crea un nuevo deudor
+ * Obtiene todos las deudas del usuario autenticado
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
  */
 async function getMisDeudas(req, res) {
    try {
-    const rutDeudor = req.rut;
-    return res.json({
-        data: rutDeudor,
-    });
+    const idDeudor = req.id;
+    const cobros = await Cobro.find({ deudorId: idDeudor });
+    cobros.length === 0
+        ? respondSuccess(req, res, 204)
+        : respondSuccess(req, res, 200, cobros);
    } catch (error) {
-    return res.status(500).json({ error: "Ocurrió un error al obtener las deudas del deudor." });
+    handleError(error, "misDeudas.controller -> getMisDeudas");
+    respondError(req, res, 400, error.message);
    }
 }
 /**
- * Elimina un cobro por su id
+ * Obtiene una deuda por su id
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
  */
-async function getComprobantePago(req, res) {
-    const doc = new PDF({ bufferPage: true });
-
-    const filename = `Comprobante${Date.now()}.pdf`;
-
-    const stream = res.writeHead(200, {
-        "Content-Type": "application/pdf",
-        "Content-disposition": `attachment;filename=${filename}`,
-    });
-    doc.on("data", (data) => {
-    stream.write(data);
-    });
-    doc.on("end", () => {
-        stream.end();
-    });
-
-    const platos = [
-        {
-            nro: 1,
-            descripcion: "charque",
-            precio: 2000,
-            cantidad: 3,
-            subtotal: 34,
-        },
-        {
-            nro: 1,
-            descripcion: "lentejas",
-            precio: 1000,
-            cantidad: 2,
-            subtotal: 76,
-        },
-    ];
-    doc.setDocumentHeader({}, () => {
-        doc.text("Comprobante de pago", {
-            width: 420,
-            align: "center",
-        });
-    });
-    doc.addTable([
-        { key: "nro", label: "Nro", align: "left" },
-        { key: "descripcion", label: "descripcion", align: "left" },
-        { key: "precio", label: "precio unit", align: "left" },
-        { key: "cantidad", label: "cantidad", align: "left" },
-        { key: "subtotal", label: "sub total", align: "right" },
-    ], platos, {
-        border: null,
-        width: "fill_body",
-        striped: true,
-        stripedColors: ["#f6f6f6", "#d6c4dd"],
-        cellsPadding: 10,
-        marginLeft: 45,
-        marginRight: 45,
-        headAlign: "center",
-    });
-    doc.render();
-    doc.end();
+async function getMisDeudasByid(req, res) {
+    try {
+        const { params } = req;
+        const { error: paramsError } = cobroIdSchema.validate(params);
+        if (paramsError) return respondError(req, res, 400, paramsError.message);
+        const cobro = await Cobro.find({ _id: params.id });
+        respondSuccess(req, res, 200, cobro);
+    } catch (error) {
+        handleError(error, "misDeudas.controller -> getMisDeudasByid");
+        respondError(req, res, 500, "No se pudo obtener la deuda");
+    }
 }
+
+/**
+ * Crea un nuevo pago
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function createPago(req, res) {
+    try {
+        const { body } = req;
+        const { error: bodyError } = pagoBodySchema.validate(body);
+        if (bodyError) return respondError(req, res, 400, bodyError.message);
+        // verificar si el cobro existe
+        const cobro = await Cobro.findById(body.cobroId);
+        if (!cobro) return respondError(req, res, 404, "El cobro no existe");
+        const { cobroId, monto, tipo } = req.body;
+        // Calcula el saldo pendiente (monto pendiente a pagar)
+        const saldoPendiente = cobro.monto - monto;
+        if (saldoPendiente < 0) return respondError(req, res, 404, "monto mayor a deuda pendiente");
+        // actualiza el monto pagado en el cobro
+        cobro.montoPagado = cobro.montoPagado + monto;
+        // actualiza el estado si el saldo pendiente es igual a 0
+        if (saldoPendiente === 0) {
+            cobro.estado = "pagada";
+        }
+        await cobro.save();
+        const nuevoPago = new Pago({
+            cobroId,
+            monto,
+            tipo,
+        });
+        await nuevoPago.save();
+        if (!nuevoPago) {
+            return respondError(req, res, 400, "No se creo el pago");
+        }
+        respondSuccess(req, res, 201, nuevoPago);
+    } catch (error) {
+        handleError(error, "misDeudas.controller -> createPago");
+        respondError(req, res, 500, "No se creo el pago");
+    }
+}
+
 module.exports = {
     getMisDeudas,
-    getComprobantePago,
+    getMisDeudasByid,
+    createPago,
 };
