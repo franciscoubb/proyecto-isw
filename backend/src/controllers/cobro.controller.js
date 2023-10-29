@@ -33,7 +33,7 @@ async function createCobro(req, res) {
         const { error: bodyError } = cobroBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
         const [nuevoCobro, cobroError] = await CobroService.createCobro(body);
-        if (cobroError) return respondError(req, res, 400, useError);
+        if (cobroError) return respondError(req, res, 400, cobroError);
         if (!nuevoCobro) {
             return respondError(req, res, 400, "No se creo el cobro");
         }
@@ -81,7 +81,7 @@ async function updateCobro(req, res) {
 
         const [cobro, cobroError] = await CobroService.updateCobro(params.id, body);
 
-        if (userError) return respondError(req, res, 400, cobroError);
+        if (cobroError) return respondError(req, res, 400, cobroError);
         respondSuccess(req, res, 200, cobro);
     } catch (error) {
         respondInternalError(error, "cobro.controller -> updateCobro");
@@ -101,7 +101,7 @@ async function deleteCobro(req, res) {
 
         const cobro = await CobroService.deleteCobro(params.id);
         !cobro
-        ?respondInternalError(
+        ?respondError(
             req,
             res,
             404,
@@ -114,6 +114,7 @@ async function deleteCobro(req, res) {
         handleError(req, res, 500, "No se pudo eliminar el cobro");
     }
 }
+
 
 module.exports = {
     createCobro,

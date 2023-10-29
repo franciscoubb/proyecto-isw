@@ -23,9 +23,13 @@ const cobroSchema = new mongoose.Schema(
             enum: ["pendiente", "vencida", "pagada"],
             default: "pendiente",
         },
-        userId: {
+        fechaEmision: {
+            type: Date,
+            default: Date.now(),
+        },
+        deudorId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: "Deudor",
         },
     },
     {

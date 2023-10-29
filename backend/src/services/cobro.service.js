@@ -1,8 +1,9 @@
-const User = require("../models/user.model.js");
+// const User = require("../models/user.model.js");
+const Deudor = require("../models/deudor.model.js");
 const Cobro = require("../models/cobro.model.js");
 const { handleError } = require("../utils/errorHandler.js");
 const { enviarMail } = require("../helpers/mailer.js");
-
+const correoTemplates = require("../helpers/correoTemplates.js");
 /**
  * Obtiene todos los cobros de la base de datos
  * @returns {Promise} Promesa con el objeto de los cobros
@@ -10,7 +11,7 @@ const { enviarMail } = require("../helpers/mailer.js");
 async function getCobros() {
     try {
         const cobros = await Cobro.find()
-        .populate("userId")
+        .populate("deudorId")
         .exec();
         if (!cobros) return [null, "No hay cobros"];
 
@@ -27,16 +28,19 @@ async function getCobros() {
  */
 async function createCobro(cobro) {
     try {
-        const { tipoTramite, monto, plazoMaximoPago, userId } = cobro;
+        const { tipoTramite, monto, plazoMaximoPago, fechaEmision, deudorId } = cobro;
         const nuevoCobro = new Cobro({
             tipoTramite,
             monto,
             plazoMaximoPago,
-            userId,
+            fechaEmision,
+            deudorId,
+            // usuarioId,
         });
         await nuevoCobro.save();
-        const { email } = await User.findById({ _id: userId });
-        enviarMail(email, "deuda", "se te ha registrado una deuda");
+        const { email } = await Deudor.findById({ _id: deudorId });
+        const { asunto, cuerpo } = correoTemplates.nuevaDeuda();
+        enviarMail(email, asunto, cuerpo);
         return [nuevoCobro, null];
     } catch (error) {
         handleError(error, " cobro.service -> createCobro");
@@ -50,7 +54,7 @@ async function createCobro(cobro) {
  */
 async function getCobroById(id) {
     try {
-        const cobro = await Cobro.findById({ _id: id });
+        const cobro = await Cobro.findById({ _id: id }).populate("deudorId");
         if (!cobro) return [null, "El cobro no existe"];
 
         return [cobro, null];

@@ -2,7 +2,7 @@
 const nodemailer = require("nodemailer");
 const { EMAIL, EMAIL_PASS } = require("../config/configEnv.js");
 
-const enviarMail = async (destinatario, asunto, texto) => {
+const enviarMail = async (destinatario, asunto, cuerpo) => {
     const config = {
         host: "smtp.gmail.com",
         port: 587,
@@ -15,7 +15,7 @@ const enviarMail = async (destinatario, asunto, texto) => {
         from: `Municipalidad ${EMAIL}`,
         to: destinatario,
         subject: asunto,
-        text: texto,
+        html: cuerpo,
     };
     const transport = nodemailer.createTransport(config);
 
@@ -23,5 +23,3 @@ const enviarMail = async (destinatario, asunto, texto) => {
 };
 
 module.exports = { enviarMail };
-
-// module.exports = { enviarMail };
