@@ -5,7 +5,9 @@ const Cobro = require("../models/cobro.model.js");
 const { cobroIdSchema } = require("../schema/cobro.schema.js");
 const Pago = require("../models/pago.model");
 const { pagoBodySchema } = require("../schema/pago.schema.js");
-
+const { enviarMail } = require("../helpers/mailer.js");
+const correoTemplates = require("../helpers/correoTemplates.js");
+const Deudor = require("../models/deudor.model");
 /**
  * Obtiene todos las deudas del usuario autenticado
  * @param {Object} req - Objeto de petición
@@ -49,6 +51,7 @@ async function getMisDeudasByid(req, res) {
 async function createPago(req, res) {
     try {
         const { body } = req;
+        const { id } = req;
         const { error: bodyError } = pagoBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
         // verificar si el cobro existe
@@ -75,6 +78,10 @@ async function createPago(req, res) {
             return respondError(req, res, 400, "No se creo el pago");
         }
         respondSuccess(req, res, 201, nuevoPago);
+
+        const deudor = await Deudor.findById({ _id: id });
+        const correo = correoTemplates.nuevoPago(deudor, nuevoPago);
+        enviarMail(deudor.email, correo.asunto, correo.cuerpo);
     } catch (error) {
         handleError(error, "misDeudas.controller -> createPago");
         respondError(req, res, 500, "No se creo el pago");

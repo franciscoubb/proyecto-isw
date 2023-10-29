@@ -35,12 +35,11 @@ async function createCobro(cobro) {
             plazoMaximoPago,
             fechaEmision,
             deudorId,
-            // usuarioId,
         });
         await nuevoCobro.save();
-        const { email } = await Deudor.findById({ _id: deudorId });
-        const { asunto, cuerpo } = correoTemplates.nuevaDeuda();
-        enviarMail(email, asunto, cuerpo);
+        const deudor = await Deudor.findById({ _id: deudorId });
+        const correo = correoTemplates.nuevaDeuda(deudor, nuevoCobro);
+        enviarMail(deudor.email, correo.asunto, correo.cuerpo);
         return [nuevoCobro, null];
     } catch (error) {
         handleError(error, " cobro.service -> createCobro");
