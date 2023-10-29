@@ -61,7 +61,7 @@ async function getCobroById(req, res) {
         respondSuccess(req, res, 200, cobro);
     } catch (error) {
         handleError(error, "cobro.controller -> getCobroById");
-        respondError(req, res, 500, "No se pudo obtener el usuario");
+        respondError(req, res, 500, "No se pudo obtener el cobro");
     }
 }
 

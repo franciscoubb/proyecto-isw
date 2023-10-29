@@ -7,20 +7,20 @@ const deudorController = require("../controllers/deudor.controller.js");
 
 
 /** Middlewares de autorización */
-// const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
+const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 
 /** Middleware de autenticación */
-// const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
+const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
 
 /** Instancia del enrutador */
 const router = express.Router();
 
-// router.use(authenticationMiddleware);
+router.use(authenticationMiddleware.verifyJWT);
 
 // Define las rutas para los cobros
-router.post("/", deudorController.createDeudor);
-router.get("/", deudorController.getDeudores);
-router.get("/:id", deudorController.getDeudorById);
-router.put("/:id", deudorController.updateDeudor);
-router.delete("/:id", deudorController.deleteDeudor);
+router.post("/", authorizationMiddleware.isEncargado, deudorController.createDeudor);
+router.get("/", authorizationMiddleware.isEncargado, deudorController.getDeudores);
+router.get("/:id", authorizationMiddleware.isEncargado, deudorController.getDeudorById);
+router.put("/:id", authorizationMiddleware.isEncargado, deudorController.updateDeudor);
+router.delete("/:id", authorizationMiddleware.isEncargado, deudorController.deleteDeudor);
 module.exports = router;

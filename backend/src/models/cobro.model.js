@@ -27,6 +27,10 @@ const cobroSchema = new mongoose.Schema(
             type: Date,
             default: Date.now(),
         },
+        montoPagado: {
+            type: Number,
+            default: 0,
+        },
         deudorId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Deudor",
