@@ -1,6 +1,6 @@
 "use strict";
 const { respondSuccess, respondError } = require("../utils/resHandler");
-const { authDeudorLoginBodySchema } = require("../schema/authDeudor");
+const { authDeudorLoginBodySchema } = require("../schema/authDeudor.schema");
 const { handleError } = require("../utils/errorHandler");
 const AuthDeudorService = require("../services/authDeudor.service");
 /**

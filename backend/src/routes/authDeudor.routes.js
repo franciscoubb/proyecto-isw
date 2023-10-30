@@ -11,6 +11,7 @@ const router = express.Router();
 
 // Define las rutas para autenticacion de deudor
 router.post("/login", authDeudorController.login);
-
+router.post("/logout", authDeudorController.logout);
+router.get("/refresh", authDeudorController.refresh);
 
 module.exports = router;

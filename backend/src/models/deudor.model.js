@@ -6,10 +6,14 @@ const deudorSchema = new mongoose.Schema(
         nombre: {
             type: String,
             required: true,
+            minlength: 2,
+            maxlength: 18,
         },
         apellido: {
             type: String,
             required: true,
+            minlength: 2,
+            maxlength: 20,
         },
         rut: {
             type: String,

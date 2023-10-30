@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 "use strict";
 // Importa el modulo 'express' para crear las rutas
 const express = require("express");
@@ -23,6 +24,9 @@ router.use(authenticationMiddleware.verifyJWT);
 router.post("/", authorizationMiddleware.isEncargado, cobroController.createCobro);
 router.get("/", authorizationMiddleware.isEncargado, cobroController.getCobros);
 router.get("/:id", authorizationMiddleware.isEncargado, cobroController.getCobroById);
+router.get("/deudor/:id", authorizationMiddleware.isEncargado, cobroController.getCobrosByDeudorId);
+// Rutas para pagos
+router.get("/pagos/:id", authorizationMiddleware.isEncargado, cobroController.getPagosByCobroId);
 router.put("/:id", authorizationMiddleware.isEncargado, cobroController.updateCobro);
 router.delete("/:id", authorizationMiddleware.isEncargado, cobroController.deleteCobro);
 router.get("/descargar/excel", authorizationMiddleware.isEncargado, excelController.generarExcel);
