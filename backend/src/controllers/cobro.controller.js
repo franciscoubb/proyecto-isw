@@ -93,6 +93,7 @@ async function getCobrosByDeudorId(req, res) {
  */
 async function getPagosByCobroId(req, res) {
     try {
+         // cobroId params
         const { params } = req;
         const { error: paramsError } = cobroIdSchema.validate(params);
         if (paramsError) return respondError(req, res, 400, paramsError.message);
@@ -103,7 +104,7 @@ async function getPagosByCobroId(req, res) {
         respondSuccess(req, res, 200, pagos);
     } catch (error) {
         handleError(error, "cobro.controller -> getPagosByCobroId");
-        respondError(req, res, 500, "No se pudo obtener los pagos del cobro");
+        respondError(req, res, 500, "No se pudo obtener los pagos del deudor");
     }
 }
 /**

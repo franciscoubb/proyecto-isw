@@ -25,7 +25,6 @@ router.post("/", authorizationMiddleware.isEncargado, cobroController.createCobr
 router.get("/", authorizationMiddleware.isEncargado, cobroController.getCobros);
 router.get("/:id", authorizationMiddleware.isEncargado, cobroController.getCobroById);
 router.get("/deudor/:id", authorizationMiddleware.isEncargado, cobroController.getCobrosByDeudorId);
-// Rutas para pagos
 router.get("/pagos/:id", authorizationMiddleware.isEncargado, cobroController.getPagosByCobroId);
 router.put("/:id", authorizationMiddleware.isEncargado, cobroController.updateCobro);
 router.delete("/:id", authorizationMiddleware.isEncargado, cobroController.deleteCobro);

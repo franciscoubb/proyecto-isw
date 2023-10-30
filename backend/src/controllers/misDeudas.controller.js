@@ -54,6 +54,10 @@ async function createPago(req, res) {
         const { id } = req;
         const { error: bodyError } = pagoBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
+        // Validación adicional para asegurarse de que "monto" sea un número
+        if (typeof body.monto !== "number") {
+            return respondError(req, res, 400, "El campo 'monto' debe ser un número.");
+        }
         // verificar si el cobro existe
         const cobro = await Cobro.findById(body.cobroId);
         if (!cobro) return respondError(req, res, 404, "El cobro no existe");
