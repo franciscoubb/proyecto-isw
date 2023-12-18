@@ -1,5 +1,5 @@
 import { useForm, Controller } from "react-hook-form";
-import { createDeudor, getDeudores } from "../services/deudor.service";
+import { createDeudor } from "../services/deudor.service";
 import Swal from "sweetalert2";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -24,15 +24,13 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
     try {
       data.rut = formatRut(data.rut, false);
       await createDeudor(data);
-      const updateDeudores = await getDeudores();
-      setDeudores(updateDeudores);
+      setDeudores([data, ...deudores]);
       reset();
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Your work has been saved",
-        showConfirmButton: false,
-        timer: 1500,
+        title: "Deudor/a Registrad@ correctamente",
+        showConfirmButton: true,
       });
     } catch (error) {
       console.error("Error al crear el deudor", error);
@@ -88,6 +86,7 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
             <Form.Control.Feedback type="invalid">
               {errors.nombre?.message}
             </Form.Control.Feedback>
+            <Form.Text className="text-muted">ingrese sin tildes</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Apellido</Form.Label>
@@ -125,9 +124,10 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
             <Form.Control.Feedback type="invalid">
               {errors.apellido?.message}
             </Form.Control.Feedback>
+            <Form.Text className="text-muted">ingrese sin tildes</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
-            <Form.Label>Rut</Form.Label>
+            <Form.Label>RUT</Form.Label>
             <Controller
               name="rut"
               control={control}
@@ -146,7 +146,7 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
                     const rutExists = deudores.some((deudor) =>
                       compareRuts(fieldValue, deudor.rut)
                     );
-                    return !rutExists || "El rut ya existe";
+                    return !rutExists || "RUT ya registrado";
                   },
                 },
               }}
@@ -156,7 +156,7 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
                   isInvalid={errors.rut}
                   type="text"
                   {...field}
-                  placeholder="rut"
+                  placeholder="0.000.000-0"
                   onChange={(e) => {
                     const sinMascara = cleanRut(e.target.value);
                     const masaca = formatRut(sinMascara);
@@ -169,7 +169,7 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
               {errors.rut?.message}
             </Form.Control.Feedback>
             <Form.Text className="text-muted">
-              ingrese sin puntos ni guion
+              ingrese sin puntos ni guión
             </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
@@ -202,13 +202,16 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
                   isInvalid={errors.telefono}
                   type="text"
                   {...field}
-                  placeholder="telefono"
+                  placeholder="teléfono"
                 />
               )}
             />
             <Form.Control.Feedback type="invalid">
               {errors.telefono?.message}
             </Form.Control.Feedback>
+            <Form.Text className="text-muted">
+              9 digitos y comience con un 9
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
@@ -238,13 +241,16 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
             <Form.Control.Feedback type="invalid">
               {errors.email?.message}
             </Form.Control.Feedback>
+            <Form.Text className="text-muted">
+              Debe ser válido para notificar
+            </Form.Text>
           </Form.Group>
           <Modal.Footer>
             <Button variant="primary" type="submit">
-              Submit
+              Registrar
             </Button>
             <Button variant="secondary" onClick={onHide}>
-              Close
+              Cancelar
             </Button>
           </Modal.Footer>
         </Form>

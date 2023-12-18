@@ -1,8 +1,7 @@
-
 function App() {
   return (
     <>
-      <h1>Sistema gestion de cobros Municipalidad</h1>
+      <h1>Sistema gestión de deudas en Municipalidad</h1>
     </>
   );
 }

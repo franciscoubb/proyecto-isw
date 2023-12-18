@@ -17,6 +17,11 @@ export const login = async ({ email, password }) => {
       ] = `Bearer ${data.data.accessToken}`;
       cookies.set("jwt-auth", data.data.accessToken, { path: "/" });
     }
+    if (data.error.message) {
+      if (data.error.message === "El usuario y/o contraseña son incorrectos") {
+        return console.log("Bien");
+      }
+    }
   } catch (error) {
     console.log(error);
   }
@@ -26,16 +31,5 @@ export const logout = () => {
   localStorage.removeItem("user");
   delete axios.defaults.headers.common["Authorization"];
   cookies.remove("jwt");
-};
-
-export const test = async () => {
-  try {
-    const response = await axios.get("/users");
-    const { status, data } = response;
-    if (status === 200) {
-      console.log(data.data);
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  cookies.remove("jwt-auth");
 };

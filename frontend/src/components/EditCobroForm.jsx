@@ -1,14 +1,15 @@
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { createCobro } from "../services/cobro.service";
+import { getDeudores } from "../services/deudor.service";
+import { getCobros, updateCobro } from "../services/cobro.service";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import Swal from "sweetalert2";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import currencyFormatter from "currency-formatter";
-import { formatRut } from "rutlib";
-
-const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
+const EditCobroForm = ({ setCobros, show, onHide, cobros, cobroEditado }) => {
+  dayjs.extend(utc);
   const {
     handleSubmit,
     formState: { errors },
@@ -19,32 +20,44 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
       tipoTramite: "",
       monto: "",
       plazoMaximoPago: "",
+      deudorId: "",
     },
   });
-
   const onSubmit = async (data) => {
     try {
-      data.monto = currencyFormatter.unformat(data.monto, {
-        code: "CLP",
-      });
-      data.deudorId = deudorSeleccionado._id;
-      await createCobro(data);
+      console.log(cobroEditado._id);
+      await updateCobro(cobroEditado._id, data);
+      const updatedCobros = await getCobros();
+      setCobros(updatedCobros);
       reset();
       Swal.fire({
         position: "center",
         icon: "success",
-        title: `Deuda registrada notificación enviada a ${deudorSeleccionado.email}`,
-        showConfirmButton: true,
+        title: "Your work has been saved",
+        showConfirmButton: false,
+        timer: 1500,
       });
     } catch (error) {
-      console.error("Error al crear la deuda:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un error al crear deuda.",
-        icon: "error",
-      });
+      console.error("Error al crear el cobro:", error);
     }
   };
+  const [deudores, setDeudores] = useState([]);
+  useEffect(() => {
+    getDeudores().then((data) => setDeudores(data));
+  }, []);
+  useEffect(() => {
+    if (cobroEditado && cobroEditado.deudorId) {
+      const initialValues = {
+        tipoTramite: cobroEditado.tipoTramite || "",
+        monto: cobroEditado.monto || "",
+        plazoMaximoPago:
+          dayjs.utc(cobroEditado.plazoMaximoPago).format("YYYY-MM-DD") || "",
+        deudorId: cobroEditado.deudorId._id || "",
+      };
+
+      reset(initialValues);
+    }
+  }, [cobroEditado, reset]);
 
   const currentDate = dayjs().format("YYYY-MM-DD");
   const endOfYear = dayjs().endOf("year").format("YYYY-MM-DD");
@@ -57,7 +70,7 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title>Ingrese Datos Deuda</Modal.Title>
+        <Modal.Title>Actualiza Datos Cobro</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -77,11 +90,11 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                   <option value="" disabled>
                     Seleccione tipo de tramite a pagar
                   </option>
-                  <option value="tramite">trámite</option>
+                  <option value="tramite">tramite</option>
                   <option value="licencia">licencia</option>
-                  <option value="multa">multa de tránsito</option>
+                  <option value="multa">multa</option>
                   <option value="parte">parte</option>
-                  <option value="basura">basura(retiro de basura)</option>
+                  <option value="basura">basura</option>
                   <option value="permiso circulacion">
                     permiso de circulación
                   </option>
@@ -102,58 +115,18 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                   value: true,
                   message: "monto es requerido",
                 },
-                validate: {
-                  validaMax: (fieldValue) => {
-                    const montoSinMascara = currencyFormatter.unformat(
-                      fieldValue,
-                      {
-                        code: "CLP",
-                      }
-                    );
-                    const maxAmount = 5000000000000000; // Tu valor máximo permitido
-
-                    return (
-                      montoSinMascara <= maxAmount ||
-                      `El monto no puede ser mayor a ${currencyFormatter.format(
-                        maxAmount,
-                        { code: "CLP" }
-                      )}`
-                    );
-                  },
-                  validaMin: (fieldValue) => {
-                    const montoSinMascara = currencyFormatter.unformat(
-                      fieldValue,
-                      {
-                        code: "CLP",
-                      }
-                    );
-                    const minAmount = 0;
-                    return (
-                      montoSinMascara > minAmount ||
-                      `Debe ingresar un monto mayor a $0`
-                    );
-                  },
+                min: {
+                  value: 0.01,
+                  message: "monto mayor a 0",
                 },
               }}
               render={({ field }) => (
                 <Form.Control
                   autoComplete="off"
                   isInvalid={errors.monto}
-                  type="string"
+                  type="Number"
                   {...field}
                   placeholder="monto"
-                  onChange={(e) => {
-                    const sinFormato = currencyFormatter.unformat(
-                      e.target.value,
-                      {
-                        code: "CLP",
-                      }
-                    );
-                    const conFormato = currencyFormatter.format(sinFormato, {
-                      code: "CLP",
-                    });
-                    field.onChange(conFormato);
-                  }}
                 />
               )}
             />
@@ -171,20 +144,6 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                   value: true,
                   message: "vencimiento es requerido",
                 },
-                validate: (fieldValue) => {
-                  const selectedDate = dayjs(fieldValue);
-                  if (!selectedDate.isValid()) {
-                    // Manejar el caso en que la fecha no sea válida
-                    return "Por favor, selecciona una fecha válida.";
-                  }
-                  if (selectedDate.isBefore(currentDate)) {
-                    return "La fecha debe ser mayor a la actual.";
-                  }
-                  if (selectedDate.isAfter(endOfYear)) {
-                    return "La fecha no puede ser después del final del año.";
-                  }
-                  return true;
-                },
               }}
               render={({ field }) => (
                 <Form.Control
@@ -201,25 +160,41 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group>
-            <Form.Label>Deudor: </Form.Label>
-            <br></br>
-            <b>Nombre: </b>
-            {deudorSeleccionado?.nombre} {deudorSeleccionado?.apellido}
-            <br></br>
-            <b>RUT: </b>
-            {formatRut(deudorSeleccionado?.rut)}
-            <br></br>
-            <b>Teléfono: </b>
-            {deudorSeleccionado?.telefono}
-            <br></br>
-            <b>Email: </b>
-            {deudorSeleccionado?.email}
-            {/* <Form.Control.Feedback type="invalid">
+            <Form.Label>Deudor</Form.Label>
+            <Controller
+              name="deudorId"
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Deudor es requerido",
+                },
+              }}
+              render={({ field }) => (
+                <Form.Select isInvalid={errors.deudorId} {...field}>
+                  {deudores.length === 0 ? (
+                    <option disabled>No hay deudores disponibles</option>
+                  ) : (
+                    <>
+                      <option value="" disabled>
+                        Seleccione el rut del deudor
+                      </option>
+                      {deudores.map((deudor) => (
+                        <option key={deudor._id} value={deudor._id}>
+                          {deudor.rut}
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </Form.Select>
+              )}
+            />
+            <Form.Control.Feedback type="invalid">
               {errors.deudorId?.message}
-            </Form.Control.Feedback> */}
+            </Form.Control.Feedback>
             <Modal.Footer>
               <Button variant="primary" type="submit">
-                Registrar
+                Actualizar
               </Button>
               <Button variant="secondary" onClick={onHide}>
                 Cancelar
@@ -232,4 +207,4 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
   );
 };
 
-export default RegistroCobroForm;
+export default EditCobroForm;

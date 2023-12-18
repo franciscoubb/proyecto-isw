@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { getDeudores, updateDeudor } from "../services/deudor.service";
 import Swal from "sweetalert2";
@@ -15,7 +15,7 @@ const EditDeudorForm = ({
 }) => {
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     reset,
     control,
   } = useForm({
@@ -29,20 +29,24 @@ const EditDeudorForm = ({
   });
   const onSubmit = async (data) => {
     try {
+      if (!isDirty) {
+        // Si el formulario no ha sido modificado, no realizar la actualización
+        return;
+      }
       data.rut = formatRut(data.rut, false);
       await updateDeudor(deudorEditado._id, data);
       const updateDeudores = await getDeudores();
       setDeudores(updateDeudores);
-      reset();
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Your work has been saved",
+        title: "El deudor a sido actualizado",
         showConfirmButton: false,
         timer: 1500,
       });
+      reset(data);
     } catch (error) {
-      console.error("Error al crear el deudor", error);
+      console.error("Error al actualizar el deudor", error);
     }
   };
   useEffect(() => {
@@ -50,7 +54,7 @@ const EditDeudorForm = ({
       const initialValues = {
         nombre: deudorEditado.nombre || "",
         apellido: deudorEditado.apellido || "",
-        rut: deudorEditado.rut || "",
+        rut: formatRut(deudorEditado.rut) || "",
         telefono: deudorEditado.telefono || "",
         email: deudorEditado.email || "",
       };
@@ -109,6 +113,7 @@ const EditDeudorForm = ({
               <Form.Control.Feedback type="invalid">
                 {errors.nombre?.message}
               </Form.Control.Feedback>
+              <Form.Text className="text-muted">ingrese sin tildes</Form.Text>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Apellido</Form.Label>
@@ -146,9 +151,10 @@ const EditDeudorForm = ({
               <Form.Control.Feedback type="invalid">
                 {errors.apellido?.message}
               </Form.Control.Feedback>
+              <Form.Text className="text-muted">ingrese sin tildes</Form.Text>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Rut</Form.Label>
+              <Form.Label>RUT</Form.Label>
               <Controller
                 name="rut"
                 control={control}
@@ -160,14 +166,16 @@ const EditDeudorForm = ({
                   validate: {
                     ValidaRut: (fieldValue) => {
                       const esValido = validateRut(fieldValue);
-                      return esValido || "Rut no válido";
+                      return esValido || "RUT no válido";
                     },
                     existeRut: (fieldValue) => {
                       if (!deudores) return true;
+                      if (fieldValue === formatRut(deudorEditado.rut))
+                        return true;
                       const rutExists = deudores.some((deudor) =>
                         compareRuts(fieldValue, deudor.rut)
                       );
-                      return !rutExists || "El rut ya existe";
+                      return !rutExists || "RUT ya registrado";
                     },
                   },
                 }}
@@ -190,7 +198,7 @@ const EditDeudorForm = ({
                 {errors.rut?.message}
               </Form.Control.Feedback>
               <Form.Text className="text-muted">
-                ingrese sin puntos ni guion
+                ingrese sin puntos ni guión
               </Form.Text>
             </Form.Group>
             <Form.Group className="mb-3">
@@ -230,6 +238,9 @@ const EditDeudorForm = ({
               <Form.Control.Feedback type="invalid">
                 {errors.telefono?.message}
               </Form.Control.Feedback>
+              <Form.Text className="text-muted">
+                9 digitos y comience con un 9
+              </Form.Text>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
@@ -259,13 +270,16 @@ const EditDeudorForm = ({
               <Form.Control.Feedback type="invalid">
                 {errors.email?.message}
               </Form.Control.Feedback>
+              <Form.Text className="text-muted">
+                Debe ser válido para notificar
+              </Form.Text>
             </Form.Group>
             <Modal.Footer>
-              <Button variant="primary" type="submit">
-                Submit
+              <Button variant="primary" type="submit" disabled={!isDirty}>
+                Actualizar
               </Button>
               <Button variant="secondary" onClick={onHide}>
-                Close
+                Cancelar
               </Button>
             </Modal.Footer>
           </Form>

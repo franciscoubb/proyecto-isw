@@ -51,7 +51,21 @@ export const getCobros = async () => {
     console.log(error);
   }
 };
-
+/**
+ * Edita un cobro
+ */
+export const updateCobro = async (id, body) => {
+  try {
+    console.log(body);
+    const response = await axios.put(`/cobro/${id}`, body);
+    const { status, data } = response;
+    if (status === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 /**
  * Eliminar un cobro
  */
@@ -92,6 +106,27 @@ export const obtenerExcel = async (id) => {
     console.log(typeof response.data);
 
     console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * Obtiene un cobro por su id
+ * @returns
+ */
+export const getCobroById = async (id) => {
+  try {
+    const response = await axios.get(`/cobro/${id}`);
+    const { status, data } = response;
+    if (status === 200) {
+      return data.data;
+    }
+    if (status === 204) {
+      return [];
+    } else {
+      return [];
+    }
   } catch (error) {
     console.log(error);
   }

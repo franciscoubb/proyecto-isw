@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
 import { useNavigate, Link } from "react-router-dom";
-import { logout } from "../services/auth.service";
-import { AuthProvider, useAuth } from "../context/AuthContext";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import { logout } from "../services/authDeudor.service";
+import { AuthProvider, useAuth } from "../context/AuthDeudorContext";
 import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
+
 function Root() {
   return (
     <AuthProvider>
@@ -20,37 +20,25 @@ function PageRoot() {
 
   const handleLogout = () => {
     logout();
-    navigate("/auth");
+    navigate("/auth-deudor");
   };
 
-  const { user } = useAuth();
+  const { deudor } = useAuth();
 
   return (
     <>
       <Navbar bg="primary" data-bs-theme="dark" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/">
-            Municipalidad
+          <Navbar.Brand as={Link} to="/deudor">
+            gestiona tus pagos y cobros
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link as={Link} to="/">
-                Inicio
-              </Nav.Link>
-              <Nav.Link as={Link} to="/deudores">
-                Deudores
-              </Nav.Link>
-              <Nav.Link as={Link} to="/cobros">
-                Deudas
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
+          <Navbar.Collapse id="basic-navbar-nav"></Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
             <DropdownButton
               id="dropdown-basic-button"
               size="sm"
-              title={user.email || ""}
+              title={deudor.rut || ""}
             >
               <Dropdown.Item size="sm" onClick={handleLogout}>
                 Cerrar sesión

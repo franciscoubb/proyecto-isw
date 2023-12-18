@@ -13,6 +13,7 @@ import Pagination from "react-bootstrap/Pagination";
 const SimpleTable = ({ data, columns }) => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
+  // const [columnFilters, setColumnFilters] = useState({});
   const table = useReactTable({
     data,
     columns,
@@ -23,6 +24,7 @@ const SimpleTable = ({ data, columns }) => {
     state: {
       sorting,
       globalFilter: filtering,
+      // columnFilters,
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
@@ -74,24 +76,10 @@ const SimpleTable = ({ data, columns }) => {
             </tr>
           ))}
         </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((footer) => (
-                <th key={footer.id}>
-                  {flexRender(
-                    footer.column.columnDef.footer,
-                    footer.getContext()
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
       </Table>
       <p>
         {" "}
-        Pagina {table.getState().pagination.pageIndex + 1} de{" "}
+        Página {table.getState().pagination.pageIndex + 1} de{" "}
         {table.getPageCount()}
       </p>
       <Pagination>

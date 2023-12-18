@@ -60,9 +60,9 @@ export const deleteDeudor = async (id) => {
     }
   } catch (error) {
     if (error.response && error.response.status === 409) {
-      return { success: false, message: "El deudor tien cobros asociados" };
+      return { success: false, message: "El deudor tiene cobros asociados" };
     }
-    console.log(error);
+    // console.log(error);
     throw error;
   }
 };
@@ -72,7 +72,6 @@ export const deleteDeudor = async (id) => {
  */
 export const updateDeudor = async (id, body) => {
   try {
-    console.log(body);
     const response = await axios.put(`/deudor/${id}`, body);
     const { status, data } = response;
     if (status === 200) {

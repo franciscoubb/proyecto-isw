@@ -4,12 +4,14 @@ import {
   eliminarCobro,
   obtenerExcel,
 } from "../services/cobro.service";
-import RegistroCobroForm from "../components/RegistroCobroForm";
 import SimpleTable from "../components/SimpleTable";
 import Swal from "sweetalert2";
 import Button from "react-bootstrap/Button";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+// import EditCobroForm from "../components/EditCobroForm";
+import { Link } from "react-router-dom";
+import Badge from "react-bootstrap/Badge";
 const CobrosPage = () => {
   dayjs.extend(utc);
   const [cobros, setCobros] = useState([]);
@@ -27,7 +29,14 @@ const CobrosPage = () => {
   const borrarCobro = async (cobro) => {
     const result = await Swal.fire({
       title: "Estas seguro?",
-      text: `No podrás revertir esto! cobro: ${JSON.stringify(cobro)}`,
+      html: `No podrás revertir esto! </br>
+      <b>Estado:</b> ${cobro.estado} </br>
+      <b>Por pagar:</b> ${Number(
+        cobro.monto - cobro.montoPagado
+      ).toLocaleString("es-CL", {
+        style: "currency",
+        currency: "CLP",
+      })}`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -45,15 +54,15 @@ const CobrosPage = () => {
         setCobros(filtradoCobro);
 
         Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
+          title: "Eliminado!",
+          text: "La deuda se eliminó correctamente.",
           icon: "success",
         });
       } catch (error) {
-        console.error("Error deleting cobro:", error);
+        console.error("Error al eliminar deuda:", error);
         Swal.fire({
           title: "Error",
-          text: "There was an error deleting the cobro.",
+          text: "Hubo un error al eliminar la deuda.",
           icon: "error",
         });
       }
@@ -70,19 +79,16 @@ const CobrosPage = () => {
 
   const columns = [
     {
-      header: "RUT DEUDOR",
+      header: "RUT Deudor",
       accessorKey: "deudorId.rut",
-      footer: "Mi rut deudor",
     },
     {
-      header: "TIPO TRAMITE",
+      header: "Tipo de trámite",
       accessorKey: "tipoTramite",
-      footer: "Mi tipo tramite",
     },
     {
-      header: "MONTO",
+      header: "Monto",
       accessorKey: "monto",
-      footer: "Mi monto",
       cell: (info) => {
         const cellValue = info.getValue();
         return Number(cellValue).toLocaleString("es-CL", {
@@ -92,73 +98,93 @@ const CobrosPage = () => {
       },
     },
     {
-      header: "VENCIMIENTO",
+      header: "Monto pagado",
+      accessorKey: "montoPagado",
+      cell: (info) => {
+        const cellValue = info.getValue();
+        return Number(cellValue).toLocaleString("es-CL", {
+          style: "currency",
+          currency: "CLP",
+        });
+      },
+    },
+    {
+      header: "Estado",
+      accessorKey: "estado",
+      cell: (info) => {
+        const cellValue = info.getValue();
+        let colorClass = "";
+        if (cellValue === "pendiente") {
+          colorClass = "primary";
+        } else if (cellValue === "vencida") {
+          colorClass = "danger";
+        } else if (cellValue === "pagada") {
+          colorClass = "success";
+        }
+
+        return (
+          <div className="d-flex">
+            <Badge
+              pill
+              bg={colorClass}
+              text="light"
+              className="col-12 col-lg-12 col-xl-10 col-xxl-8 p-2"
+            >
+              {cellValue}
+            </Badge>
+          </div>
+        );
+      },
+    },
+
+    {
+      header: "Fecha emisión",
+      accessorKey: "fechaEmision",
+      cell: (info) => {
+        return dayjs(info.getValue()).format("DD/MM/YYYY");
+      },
+    },
+    {
+      header: "Vencimiento",
       accessorKey: "plazoMaximoPago",
-      footer: "Mi vencimiento",
       cell: (info) => {
         return dayjs.utc(info.getValue()).format("DD/MM/YYYY");
       },
     },
     {
-      header: "ESTADO",
-      accessorKey: "estado",
-      footer: "Mi estado",
-      cell: (info) => {
-        const cellValue = info.getValue();
-        let textColorClass = "";
-        if (cellValue === "pendiente") {
-          textColorClass = "text-primary";
-        } else if (cellValue === "vencida") {
-          textColorClass = "text-danger";
-        } else if (cellValue === "pagada") {
-          textColorClass = "text-success";
-        }
-
-        return <span className={textColorClass}>{cellValue}</span>;
-      },
-    },
-    {
-      header: "FECHA EMISIÓN",
-      accessorKey: "fechaEmision",
-      footer: "Mi fecha emision",
-      cell: (info) => {
-        // console.log(info.getValue());
-        return dayjs(info.getValue()).format("DD/MM/YYYY");
-      },
-    },
-    {
-      header: "ACCIONES",
+      header: "Acciones",
       cell: ({ row }) => {
         const cobro = row.original;
         return (
-          <div className="d-flex gap-2">
-            <Button
-              variant="outline-warning"
-              size="sm"
-              onClick={() => console.log(cobro, cobro._id)}
-            >
-              Editar
-            </Button>
+          <div className="d-flex flex-column flex-sm-row align-items-start">
             <Button
               variant="outline-danger"
               size="sm"
+              className="mb-2 mb-sm-0 me-sm-2 w-100"
               onClick={() => borrarCobro(cobro)}
             >
               Eliminar
             </Button>
+            {cobro.montoPagado > 0 && (
+              <Button
+                variant="outline-info"
+                size="sm"
+                className="w-100"
+                as={Link}
+                to={`/cobros/pagos/${cobro._id}`}
+              >
+                VerPagos
+              </Button>
+            )}
           </div>
         );
       },
     },
   ];
-  const [modalShow, setModalShow] = useState(false);
   return (
     <>
-      <h2>Lista de Cobros</h2>
-      <div className="d-flex gap-2 mb-2">
-        <Button size="sm" variant="primary" onClick={() => setModalShow(true)}>
-          Nuevo Cobro
-        </Button>
+      <h2>Lista de Deudas y sus pagos</h2>
+      <div className="mb-2">
         <Button
           variant="success"
           disabled={cobros.length <= 0}
@@ -167,14 +193,18 @@ const CobrosPage = () => {
         >
           descargar excel
         </Button>
+        <span>filtra por estado:</span>
+        <Button variant="primary" size="sm">
+          pendiente
+        </Button>
+        <Button variant="success" size="sm">
+          pagada
+        </Button>
+        <Button variant="danger" size="sm">
+          vencida
+        </Button>
       </div>
-      <RegistroCobroForm
-        setCobros={setCobros}
-        cobros={cobros}
-        onHide={() => setModalShow(false)}
-        show={modalShow}
-      />
-      <SimpleTable data={cobros} columns={columns} />
+      <SimpleTable data={cobros} columns={columns} className="mt-5" />
     </>
   );
 };
