@@ -1,10 +1,8 @@
 import ReactDOM from "react-dom/client";
 import App from "./routes/App.jsx";
 import AppDeudor from "./routes/AppDeudor.jsx";
-import AppDeudor from "./routes/AppDeudor.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root.jsx";
-import RootDeudor from "./routes/RootDeudor.jsx";
 import RootDeudor from "./routes/RootDeudor.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
 import Login from "./routes/Login.jsx";
