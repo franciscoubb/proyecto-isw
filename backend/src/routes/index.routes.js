@@ -21,22 +21,22 @@ const deudoresRoutes = require("./deudores.routes.js");
 const authDeudorRoutes = require("./authDeudor.routes.js");
 
 /** Middleware de autenticación */
-// const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
+const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
 
 /** Instancia del enrutador */
 const router = express.Router();
 
 // Define las rutas para los usuarios /api/usuarios
-router.use("/users", userRoutes);
+router.use("/users", authenticationMiddleware.verifyJWT, userRoutes);
 // Define las rutas para la autenticación /api/auth
 router.use("/auth", authRoutes);
 // Define las rutas para la autenticacion de deudores /api/authDeudor
 router.use("/auth/deudor", authDeudorRoutes);
 // Define las rutas para datos de deudor api/deudor
-router.use("/deudor", deudorRoutes);
+router.use("/deudor", authenticationMiddleware.verifyJWT, deudorRoutes);
 // Define las rutas para cobro /api/cobro
 router.use("/cobro", cobroRoutes);
-// Define las rutas para los deudores
+// Define las rutas para los api/deudores
 router.use("/deudores", deudoresRoutes);
 // Exporta el enrutador
 module.exports = router;

@@ -1,19 +1,20 @@
 const Joi = require("joi");
 
 const deudorBodySchema = Joi.object({
-    nombre: Joi.string().required().min(2).pattern(/^[A-Za-z]+( [A-Za-z]+)*$/).messages({
+    nombre: Joi.string().required().min(2).max(18).pattern(/^[A-Za-z]+( [A-Za-z]+)*$/).messages({
         "any.required": "El nombre es obligatorio",
         "string.empty": "El nombre no puede estar vacio",
         "string.base": "El nombre debe ser tipo string",
         "string.pattern.base": "El nombre debe contener solo letras",
         "string.min": "El nombre debe tener un minimo de 2 caracteres",
+        "string.max": "El nombre no debe tener mas de 18 caracteres",
     }),
-    apellido: Joi.string().required().min(2).pattern(/^[A-Za-z]+( [A-Za-z]+)*$/).messages({
+    apellido: Joi.string().required().min(2).max(20).pattern(/^[A-Za-z]+( [A-Za-z]+)*$/).messages({
         "any.required": "El apellido es obligatorio",
         "string.empty": "El apellido no puede estar vacio",
         "string.base": "El apellido debe ser tipo string",
         "string.pattern.base": "El apellido debe contener solo letras",
-        "string.min": "El apellido debe tener un minimo de 2 caracteres",
+        "string.max": "El apellido no debe tener mas de 20 caracteres",
     }),
     rut: Joi.string()
     .required()

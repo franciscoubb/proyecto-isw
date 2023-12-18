@@ -29,7 +29,7 @@ async function login(deudor) {
     }
 
     const accessToken = jwt.sign(
-      { rut: deudorFound.rut },
+      { rut: deudorFound.rut, id: deudorFound._id },
       ACCESS_JWT_SECRET,
       {
         expiresIn: "1d",
@@ -37,7 +37,7 @@ async function login(deudor) {
     );
 
     const refreshToken = jwt.sign(
-        { rut: deudorFound.rut },
+        { rut: deudorFound.rut, id: deudorFound._id },
       REFRESH_JWT_SECRET,
       {
         expiresIn: "7d", // 7 días
@@ -73,7 +73,7 @@ async function refresh(cookies) {
           if (!deudorFound) return [null, "No deudor no autorizado"];
   
           const accessToken = jwt.sign(
-            { rut: deudorFound.rut },
+            { rut: deudorFound.rut, id: deudorFound._id },
             ACCESS_JWT_SECRET,
             {
               expiresIn: "1d",

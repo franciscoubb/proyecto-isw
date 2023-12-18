@@ -62,7 +62,7 @@ const verifyRUTToken = (req, res, next) => {
     jwt.verify(token, ACCESS_JWT_SECRET, (err, decoded) => {
       if (err) return respondError(req, res, 403, "No autorizado", err.message);
       req.rut = decoded.rut; // Almacena el RUT en el objeto de solicitud para su posterior uso
-      console.log(decoded.rut);
+      req.id = decoded.id;
       next();
     });
   } catch (error) {

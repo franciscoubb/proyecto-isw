@@ -2,7 +2,6 @@
 
 const mongoose = require("mongoose");
 const TRAMITES = require("../constants/tramites.constants.js");
-
 const cobroSchema = new mongoose.Schema(
     {
         tipoTramite: {
@@ -27,6 +26,10 @@ const cobroSchema = new mongoose.Schema(
             type: Date,
             default: Date.now(),
         },
+        montoPagado: {
+            type: Number,
+            default: 0,
+        },
         deudorId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Deudor",
@@ -36,6 +39,7 @@ const cobroSchema = new mongoose.Schema(
         versionKey: false,
     },
 );
+
 
 const Cobro = mongoose.model("Cobro", cobroSchema);
 
