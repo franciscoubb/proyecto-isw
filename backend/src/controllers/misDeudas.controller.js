@@ -5,6 +5,7 @@ const Cobro = require("../models/cobro.model.js");
 const { cobroIdSchema } = require("../schema/cobro.schema.js");
 const Pago = require("../models/pago.model");
 const { pagoBodySchema } = require("../schema/pago.schema.js");
+
 const { enviarMail } = require("../helpers/mailer.js");
 const correoTemplates = require("../helpers/correoTemplates.js");
 const Deudor = require("../models/deudor.model");

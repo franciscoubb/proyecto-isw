@@ -1,8 +1,10 @@
 import ReactDOM from "react-dom/client";
 import App from "./routes/App.jsx";
 import AppDeudor from "./routes/AppDeudor.jsx";
+import AppDeudor from "./routes/AppDeudor.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root.jsx";
+import RootDeudor from "./routes/RootDeudor.jsx";
 import RootDeudor from "./routes/RootDeudor.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
 import Login from "./routes/Login.jsx";
@@ -36,11 +38,34 @@ const router = createBrowserRouter([
         path: "/cobros/pagos/:id",
         element: <Pagos />,
       },
+      {
+        path: "/cobros/pagos/:id",
+        element: <Pagos />,
+      },
     ],
   },
   {
     path: "/auth",
     element: <Login />,
+  },
+  {
+    path: "/auth-deudor",
+    element: <LoginDeudor />,
+  },
+  {
+    path: "/deudor",
+    element: <RootDeudor />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/deudor",
+        element: <AppDeudor />,
+      },
+      {
+        path: "/deudor/:id",
+        element: <DeudorCobroDetalles />,
+      },
+    ],
   },
   {
     path: "/auth-deudor",

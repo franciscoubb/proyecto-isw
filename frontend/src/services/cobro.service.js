@@ -1,43 +1,12 @@
 import axios from "./root.service";
-import dayjs from "dayjs";
-/**
- * crear un nuevo cobro
- */
-export const createCobro = async ({
-  tipoTramite,
-  monto,
-  plazoMaximoPago,
-  deudorId,
-}) => {
-  try {
-    const response = await axios.post("/cobro", {
-      tipoTramite,
-      monto,
-      plazoMaximoPago,
-      deudorId,
-    });
-    const { status, data } = response;
-    if (status === 201) {
-      return data.data;
-    }
-    if (status === 204) {
-      return [];
-    }
-    if (status === 500) {
-      console.log("Error");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 /**
- * Obtiene todos los cobros
+ * Obtiene un cobro por su id
  * @returns
  */
-export const getCobros = async () => {
+export const getCobroById = async (id) => {
   try {
-    const response = await axios.get("/cobro");
+    const response = await axios.get(`/cobro/${id}`);
     const { status, data } = response;
     if (status === 200) {
       return data.data;
@@ -106,27 +75,6 @@ export const obtenerExcel = async (id) => {
     console.log(typeof response.data);
 
     console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-/**
- * Obtiene un cobro por su id
- * @returns
- */
-export const getCobroById = async (id) => {
-  try {
-    const response = await axios.get(`/cobro/${id}`);
-    const { status, data } = response;
-    if (status === 200) {
-      return data.data;
-    }
-    if (status === 204) {
-      return [];
-    } else {
-      return [];
-    }
   } catch (error) {
     console.log(error);
   }
