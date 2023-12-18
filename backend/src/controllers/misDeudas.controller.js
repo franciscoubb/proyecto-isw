@@ -5,9 +5,13 @@ const Cobro = require("../models/cobro.model.js");
 const { cobroIdSchema } = require("../schema/cobro.schema.js");
 const Pago = require("../models/pago.model");
 const { pagoBodySchema } = require("../schema/pago.schema.js");
+<<<<<<< HEAD
+
+=======
 const { enviarMail } = require("../helpers/mailer.js");
 const correoTemplates = require("../helpers/correoTemplates.js");
 const Deudor = require("../models/deudor.model");
+>>>>>>> b22523de99312baca0f515ae824fbe13a148fabc
 /**
  * Obtiene todos las deudas del usuario autenticado
  * @param {Object} req - Objeto de petición
@@ -51,6 +55,10 @@ async function getMisDeudasByid(req, res) {
 async function createPago(req, res) {
     try {
         const { body } = req;
+<<<<<<< HEAD
+        const { error: bodyError } = pagoBodySchema.validate(body);
+        if (bodyError) return respondError(req, res, 400, bodyError.message);
+=======
         const { id } = req;
         const { error: bodyError } = pagoBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
@@ -58,6 +66,7 @@ async function createPago(req, res) {
         if (typeof body.monto !== "number") {
             return respondError(req, res, 400, "El campo 'monto' debe ser un número.");
         }
+>>>>>>> b22523de99312baca0f515ae824fbe13a148fabc
         // verificar si el cobro existe
         const cobro = await Cobro.findById(body.cobroId);
         if (!cobro) return respondError(req, res, 404, "El cobro no existe");
@@ -82,10 +91,13 @@ async function createPago(req, res) {
             return respondError(req, res, 400, "No se creo el pago");
         }
         respondSuccess(req, res, 201, nuevoPago);
+<<<<<<< HEAD
+=======
 
         const deudor = await Deudor.findById({ _id: id });
         const correo = correoTemplates.nuevoPago(deudor, nuevoPago);
         enviarMail(deudor.email, correo.asunto, correo.cuerpo);
+>>>>>>> b22523de99312baca0f515ae824fbe13a148fabc
     } catch (error) {
         handleError(error, "misDeudas.controller -> createPago");
         respondError(req, res, 500, "No se creo el pago");

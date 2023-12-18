@@ -1,12 +1,11 @@
 import axios from "./root.service";
-
 /**
- * Obtiene un cobro por su id
+ * Obtiene todos los cobros
  * @returns
  */
-export const getCobroById = async (id) => {
+export const getPagosByCobroId = async (id) => {
   try {
-    const response = await axios.get(`/cobro/${id}`);
+    const response = await axios.get(`/cobro/pagos/${id}`);
     const { status, data } = response;
     if (status === 200) {
       return data.data;
