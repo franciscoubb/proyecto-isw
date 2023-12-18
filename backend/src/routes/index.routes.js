@@ -35,7 +35,7 @@ router.use("/auth/deudor", authDeudorRoutes);
 // Define las rutas para datos de deudor api/deudor
 router.use("/deudor", authenticationMiddleware.verifyJWT, deudorRoutes);
 // Define las rutas para cobro /api/cobro
-router.use("/cobro", cobroRoutes);
+router.use("/cobro", authenticationMiddleware.verifyJWT, cobroRoutes);
 // Define las rutas para los api/deudores
 router.use("/deudores", deudoresRoutes);
 // Exporta el enrutador

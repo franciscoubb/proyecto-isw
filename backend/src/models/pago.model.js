@@ -4,31 +4,30 @@ const mongoose = require("mongoose");
 
 // Crea el esquema de la coleccion 'pago'
 const pagoSchema = new mongoose.Schema(
-{
+  {
     monto: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     fecha: {
-        type: Date,
-        default: Date.now(),
+      type: Date,
+      default: Date.now,
     },
     tipo: {
-        type: String,
-        enum: ["abono", "pagoTotal"],
-        required: true,
+      type: String,
+      enum: ["abono", "pagoTotal"],
+      required: true,
     },
     cobroId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Cobro",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cobro",
+      required: true,
     },
-},
-    {
-        versionKey: false,
-    },
+  },
+  {
+    versionKey: false,
+  },
 );
-
 
 /** Modelo de datos 'Pago' */
 const Pago = mongoose.model("Pago", pagoSchema);

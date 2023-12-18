@@ -23,10 +23,11 @@ async function setupServer() {
   try {
     /** Instancia de la aplicacion */
     const server = express();
+    server.disable("x-powered-by");
     // Agrega el middleware para el manejo de datos en formato JSON
     server.use(express.json());
     // Agregamos los cors
-    server.use(cors({ origin: "/" }));
+    server.use(cors({ credentials: true, origin: true }));
     // Agregamos el middleware para el manejo de cookies
     server.use(cookieParser());
     // Agregamos morgan para ver las peticiones que se hacen al servidor

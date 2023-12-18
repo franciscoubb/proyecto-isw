@@ -39,10 +39,10 @@ async function generarExcel(req, res) {
 
         const totalMontosPendientes = cobros.reduce((total, cobro) => {
             if (cobro.estado === "pendiente") {
-              total += cobro.monto;
+            total += cobro.monto;
             }
             return total;
-          }, 0);
+        }, 0);
         const ws = wb.addWorksheet(nombreArchivo);
 
         const columnaStyle = wb.createStyle({
@@ -87,7 +87,7 @@ async function generarExcel(req, res) {
                   horizontal: "center", // Alinea el texto al centro
                 },
                 ...contenidoEstilo, // También aplica el estilo de contenido
-              });
+            });
             // Aplica estilo de fuente en función del estado
     if (cobro.estado === "vencida") {
         ws.cell(fila, 7).string(cobro.estado.toString()).style({
@@ -110,30 +110,30 @@ async function generarExcel(req, res) {
         ws.cell(fila + 1, 2) // Ajusta la fila según tu estructura
             .string("Total Deudas Pendientes:")
             .style({
-              font: {
+            font: {
                 bold: true,
                 color: "#000000", // Color de fuente negro
-              },
+            },
             });
-          
+
           ws.cell(fila + 1, 3) // Ajusta la columna según tu estructura
             .number(totalMontosPendientes)
             .style({
-              font: { bold: true },
+            font: { bold: true },
             });
             ws.cell(fila + 2, 2) // Ajusta la fila según tu estructura
             .string("Total Deudas Pagadas:")
             .style({
-              font: {
+            font: {
                 bold: true,
                 color: "#000000", // Color de fuente negro
-              },
+            },
             });
-          
+
           ws.cell(fila + 2, 3) // Ajusta la columna según tu estructura
             .number(totalMontosPagados)
             .style({
-              font: { bold: true },
+            font: { bold: true },
             });
         const pathExcel = path.join(__dirname, "../../excel", nombreArchivo + ".xlsx");
 
