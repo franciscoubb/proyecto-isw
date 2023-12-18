@@ -83,7 +83,7 @@ export const eliminarCobro = async (id) => {
 /**
  * obtiene el archivo excel desde el servidor
  */
-export const obtenerExcel = async (id) => {
+export const obtenerExcel = async () => {
   try {
     const response = await axios.get("/cobro/descargar/excel", {
       responseType: "blob",
