@@ -13,7 +13,7 @@ import Pagination from "react-bootstrap/Pagination";
 const SimpleTable = ({ data, columns }) => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  // const [columnFilters, setColumnFilters] = useState({});
+  const [columnFilters, setColumnFilters] = useState({});
   const table = useReactTable({
     data,
     columns,
@@ -24,7 +24,7 @@ const SimpleTable = ({ data, columns }) => {
     state: {
       sorting,
       globalFilter: filtering,
-      // columnFilters,
+      columnFilters,
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,

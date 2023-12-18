@@ -78,7 +78,6 @@ const AppDeudor = () => {
                     </span>
                   </ListGroup.Item>
                 </Card.Body>
-                {/* <ListGroup></ListGroup> */}
                 <Card.Body>
                   <Button as={Link} to={`/deudor/${deuda._id}`}>
                     Ir a pagar

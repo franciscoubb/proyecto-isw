@@ -193,7 +193,7 @@ const CobrosPage = () => {
         >
           descargar excel
         </Button>
-        <span>filtra por estado:</span>
+        {/* <span>filtra por estado:</span>
         <Button variant="primary" size="sm">
           pendiente
         </Button>
@@ -202,7 +202,7 @@ const CobrosPage = () => {
         </Button>
         <Button variant="danger" size="sm">
           vencida
-        </Button>
+        </Button> */}
       </div>
       <SimpleTable data={cobros} columns={columns} className="mt-5" />
     </>

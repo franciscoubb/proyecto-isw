@@ -4,8 +4,10 @@ import { login } from "../services/authDeudor.service";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { formatRut, cleanRut, validateRut } from "rutlib";
+import { useState } from "react";
 function LoginForm() {
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState(null);
 
   const {
     handleSubmit,
@@ -17,11 +19,14 @@ function LoginForm() {
     },
   });
 
-  const onSubmit = (data) => {
-    data.rut = formatRut(data.rut, false);
-    login(data).then(() => {
+  const onSubmit = async (data) => {
+    try {
+      data.rut = formatRut(data.rut, false);
+      await login(data);
       navigate("/deudor");
-    });
+    } catch (error) {
+      setServerError(error.message);
+    }
   };
 
   return (
@@ -66,6 +71,7 @@ function LoginForm() {
           {errors.rut?.message}
         </Form.Control.Feedback>
       </Form.Group>
+      {serverError && <div className="text-danger mb-3">{serverError}</div>}
       <Button type="submit">Ingresar</Button>
     </Form>
   );

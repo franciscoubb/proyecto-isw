@@ -3,8 +3,10 @@ import { useForm } from "react-hook-form";
 import { login } from "../services/auth.service";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { useState } from "react";
 function LoginForm() {
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState(null);
 
   const {
     register,
@@ -12,10 +14,13 @@ function LoginForm() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    login(data).then(() => {
+  const onSubmit = async (data) => {
+    try {
+      await login(data);
       navigate("/");
-    });
+    } catch (error) {
+      setServerError(error.message);
+    }
   };
 
   return (
@@ -61,6 +66,7 @@ function LoginForm() {
           No deberias compartir tu datos con nadie
         </Form.Text>
       </Form.Group>
+      {serverError && <div className="text-danger mb-3">{serverError}</div>}
       <Button type="submit">Ingresar</Button>
     </Form>
   );

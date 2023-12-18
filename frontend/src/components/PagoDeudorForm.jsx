@@ -58,7 +58,7 @@ const PagoDeudorForm = ({ cobro, setCobro }) => {
         montoPagado: cobro.montoPagado + data.monto,
       });
       navigate("/deudor");
-    }, 2500);
+    }, 2000);
   };
 
   return (

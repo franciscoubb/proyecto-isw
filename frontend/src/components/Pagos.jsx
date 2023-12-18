@@ -48,10 +48,10 @@ const Pagos = () => {
   }
   return (
     <>
-      <Button as={Link} to="/cobros">
+      <Button as={Link} className="mb-2" to="/cobros">
         volver
       </Button>
-      <CardGroup className="gap-2">
+      <CardGroup className="gap-2 d-flex justify-content-center flex-wrap">
         <Card
           bg="info"
           text="light"
@@ -105,7 +105,7 @@ const Pagos = () => {
                   code: "CLP",
                 })}
               </div>
-              Tipo: {pago.tipo}
+              Tipo: {pago.tipo === "pagoTotal" ? "pago total" : pago.tipo}
             </div>
             <Badge bg="primary" pill>
               {dayjs.utc(pago.fecha).format("DD/MM/YYYY")}

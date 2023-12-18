@@ -16,13 +16,12 @@ export const login = async ({ rut }) => {
       ] = `Bearer ${data.data.accessToken}`;
       cookies.set("jwt-authDeudor", data.data.accessToken, { path: "/deudor" });
     }
-    if (data.error) {
-      if (data.error.message === "El deudor no existe") {
-        return console.log("Bien");
-      }
-    }
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("Error desconocido durante el inicio de sesión");
+    }
   }
 };
 

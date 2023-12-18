@@ -17,13 +17,12 @@ export const login = async ({ email, password }) => {
       ] = `Bearer ${data.data.accessToken}`;
       cookies.set("jwt-auth", data.data.accessToken, { path: "/" });
     }
-    if (data.error.message) {
-      if (data.error.message === "El usuario y/o contraseña son incorrectos") {
-        return console.log("Bien");
-      }
-    }
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("Error desconocido durante el inicio de sesión");
+    }
   }
 };
 
