@@ -1,5 +1,55 @@
 import axios from "./root.service";
-
+import dayjs from "dayjs";
+/**
+ * crear un nuevo cobro
+ */
+export const createCobro = async ({
+  tipoTramite,
+  monto,
+  plazoMaximoPago,
+  deudorId,
+}) => {
+  try {
+    const response = await axios.post("/cobro", {
+      tipoTramite,
+      monto,
+      plazoMaximoPago,
+      deudorId,
+    });
+    const { status, data } = response;
+    if (status === 201) {
+      return data.data;
+    }
+    if (status === 204) {
+      return [];
+    }
+    if (status === 500) {
+      console.log("Error");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+/**
+ * Obtiene todos los cobros
+ * @returns
+ */
+export const getCobros = async () => {
+  try {
+    const response = await axios.get("/cobro");
+    const { status, data } = response;
+    if (status === 200) {
+      return data.data;
+    }
+    if (status === 204) {
+      return [];
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 /**
  * Obtiene un cobro por su id
  * @returns
