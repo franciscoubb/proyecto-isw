@@ -1,13 +1,14 @@
 import { useForm, Controller } from "react-hook-form";
 import { createCobro } from "../services/cobro.service";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import Swal from "sweetalert2";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import currencyFormatter from "currency-formatter";
 import { formatRut } from "rutlib";
-
+dayjs.extend(customParseFormat);
 const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
   const {
     handleSubmit,
@@ -46,8 +47,8 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
     }
   };
 
-  const currentDate = dayjs().format("YYYY-MM-DD");
   const endOfYear = dayjs().endOf("year").format("YYYY-MM-DD");
+  const minVencimiento = dayjs().add(1, "day").format("YYYY-MM-DD"); // Corrige la forma de usar add
   return (
     <Modal
       show={show}
@@ -81,7 +82,7 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                   <option value="licencia">licencia</option>
                   <option value="multa">multa de tránsito</option>
                   <option value="parte">parte</option>
-                  <option value="basura">basura(retiro de basura)</option>
+                  <option value="basura">basura (retiro de basura)</option>
                   <option value="permiso circulacion">
                     permiso de circulación
                   </option>
@@ -110,7 +111,7 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                         code: "CLP",
                       }
                     );
-                    const maxAmount = 5000000000000000; // Tu valor máximo permitido
+                    const maxAmount = 5000000000000000;
 
                     return (
                       montoSinMascara <= maxAmount ||
@@ -177,8 +178,9 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                     // Manejar el caso en que la fecha no sea válida
                     return "Por favor, selecciona una fecha válida.";
                   }
-                  if (selectedDate.isBefore(currentDate)) {
-                    return "La fecha debe ser mayor a la actual.";
+                  const today = dayjs().startOf("day");
+                  if (selectedDate.isBefore(today.add(1, "day"))) {
+                    return "La fecha debe ser mayor o igual a hoy más un día.";
                   }
                   if (selectedDate.isAfter(endOfYear)) {
                     return "La fecha no puede ser después del final del año.";
@@ -190,7 +192,7 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
                 <Form.Control
                   isInvalid={errors.plazoMaximoPago}
                   type="date"
-                  min={currentDate}
+                  min={minVencimiento}
                   max={endOfYear}
                   {...field}
                 />
@@ -214,9 +216,6 @@ const RegistroCobroForm = ({ deudorSeleccionado, show, onHide }) => {
             <br></br>
             <b>Email: </b>
             {deudorSeleccionado?.email}
-            {/* <Form.Control.Feedback type="invalid">
-              {errors.deudorId?.message}
-            </Form.Control.Feedback> */}
             <Modal.Footer>
               <Button variant="primary" type="submit">
                 Registrar

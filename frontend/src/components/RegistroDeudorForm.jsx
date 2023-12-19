@@ -137,6 +137,12 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
                   message: "Rut es requerido",
                 },
                 validate: {
+                  ValidaMin: (fieldValue) => {
+                    const sinMascara = cleanRut(fieldValue);
+                    const isValidLength =
+                      sinMascara.length === 8 || sinMascara.length === 9;
+                    return isValidLength || "El RUT debe tener 8 o 9 dígitos";
+                  },
                   ValidaRut: (fieldValue) => {
                     const esValido = validateRut(fieldValue);
                     return esValido || "Rut no válido";
@@ -159,8 +165,15 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
                   placeholder="0.000.000-0"
                   onChange={(e) => {
                     const sinMascara = cleanRut(e.target.value);
-                    const masaca = formatRut(sinMascara);
-                    field.onChange(masaca);
+                    if (e.target.value == "-") {
+                      return field.onChange("");
+                    }
+                    const isValidLength =
+                      sinMascara.length <= 9 && sinMascara.length >= 1;
+                    if (isValidLength) {
+                      const mascara = formatRut(e.target.value);
+                      field.onChange(mascara);
+                    }
                   }}
                 />
               )}

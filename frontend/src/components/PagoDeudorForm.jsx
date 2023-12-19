@@ -39,7 +39,6 @@ const PagoDeudorForm = ({ cobro, setCobro }) => {
     Swal.fire({
       title: "Procesando pago...",
       html: "Por favor espere un momento...",
-      allowConfirmButton: false,
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();

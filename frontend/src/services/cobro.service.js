@@ -52,21 +52,6 @@ export const getCobros = async () => {
 };
 
 /**
- * Edita un cobro
- */
-export const updateCobro = async (id, body) => {
-  try {
-    console.log(body);
-    const response = await axios.put(`/cobro/${id}`, body);
-    const { status, data } = response;
-    if (status === 200) {
-      return data.data;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-/**
  * Eliminar un cobro
  */
 export const eliminarCobro = async (id) => {
@@ -82,7 +67,7 @@ export const eliminarCobro = async (id) => {
 };
 
 /**
- * obtiene el archivo excel desde el servidor
+ * obtiene el archivo excel lista de deudas desde el servidor
  */
 export const obtenerExcel = async () => {
   try {
@@ -102,10 +87,6 @@ export const obtenerExcel = async () => {
 
     // Eliminar el enlace del DOM después de la descarga
     document.body.removeChild(a);
-    console.log(response);
-    console.log(typeof response.data);
-
-    console.log(response);
   } catch (error) {
     console.log(error);
   }

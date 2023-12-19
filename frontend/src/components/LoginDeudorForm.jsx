@@ -43,12 +43,18 @@ function LoginForm() {
           rules={{
             required: {
               value: true,
-              message: "el rut es obligatorio",
+              message: "RUT es obligatorio",
             },
             validate: {
               ValidaRut: (fieldValue) => {
                 const esValido = validateRut(fieldValue);
-                return esValido || "Rut no válido";
+                return esValido || "RUT no válido";
+              },
+              ValidaMin: (fieldValue) => {
+                const sinMascara = cleanRut(fieldValue);
+                const isValidLength =
+                  sinMascara.length === 8 || sinMascara.length === 9;
+                return isValidLength || "RUT no válido";
               },
             },
           }}
@@ -61,8 +67,15 @@ function LoginForm() {
               placeholder="0.000.000-0"
               onChange={(e) => {
                 const sinMascara = cleanRut(e.target.value);
-                const masaca = formatRut(sinMascara);
-                field.onChange(masaca);
+                if (e.target.value == "-") {
+                  return field.onChange("");
+                }
+                const isValidLength =
+                  sinMascara.length <= 9 && sinMascara.length >= 1;
+                if (isValidLength) {
+                  const mascara = formatRut(e.target.value);
+                  field.onChange(mascara);
+                }
               }}
             />
           )}

@@ -152,8 +152,6 @@ const DeudoresPage = () => {
         onHide={() => setModalShow(false)}
       />
       <RegistroCobroForm
-        // setCobros={setCobros}
-        // cobros={cobros}
         onHide={() => setModalCobroShow(false)}
         show={modalCobroShow}
         deudorSeleccionado={deudorSeleccionado}

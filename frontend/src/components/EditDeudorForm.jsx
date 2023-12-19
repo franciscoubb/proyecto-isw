@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { getDeudores, updateDeudor } from "../services/deudor.service";
+import { updateDeudor } from "../services/deudor.service";
 import Swal from "sweetalert2";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -33,22 +33,38 @@ const EditDeudorForm = ({
         // Si el formulario no ha sido modificado, no realizar la actualización
         return;
       }
-      data.rut = formatRut(data.rut, false);
-      await updateDeudor(deudorEditado._id, data);
-      const updateDeudores = await getDeudores();
-      setDeudores(updateDeudores);
+
+      const updatedDeudor = {
+        ...data,
+        rut: formatRut(data.rut, false),
+      };
+
+      // Actualiza el estado de los deudores
+      const updatedDeudores = deudores.map((deudor) =>
+        deudor._id === deudorEditado._id
+          ? { ...updatedDeudor, _id: deudorEditado._id }
+          : deudor
+      );
+
+      setDeudores(updatedDeudores);
+
+      // Realiza la llamada a la función para actualizar en el backend
+      await updateDeudor(deudorEditado._id, updatedDeudor);
+
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "El deudor a sido actualizado",
+        title: "El deudor ha sido actualizado",
         showConfirmButton: false,
         timer: 1500,
       });
-      reset(data);
+
+      reset({ ...data, rut: formatRut(data.rut) });
     } catch (error) {
       console.error("Error al actualizar el deudor", error);
     }
   };
+
   useEffect(() => {
     if (deudorEditado) {
       const initialValues = {
@@ -163,6 +179,12 @@ const EditDeudorForm = ({
                   message: "Rut es requerido",
                 },
                 validate: {
+                  ValidaMin: (fieldValue) => {
+                    const sinMascara = cleanRut(fieldValue);
+                    const isValidLength =
+                      sinMascara.length === 8 || sinMascara.length === 9;
+                    return isValidLength || "El RUT debe tener 8 o 9 dígitos";
+                  },
                   ValidaRut: (fieldValue) => {
                     const esValido = validateRut(fieldValue);
                     return esValido || "RUT no válido";
@@ -184,11 +206,18 @@ const EditDeudorForm = ({
                   isInvalid={errors.rut}
                   type="text"
                   {...field}
-                  placeholder="rut"
+                  placeholder="0.000.000-0"
                   onChange={(e) => {
                     const sinMascara = cleanRut(e.target.value);
-                    const masaca = formatRut(sinMascara);
-                    field.onChange(masaca);
+                    if (e.target.value == "-") {
+                      return field.onChange("");
+                    }
+                    const isValidLength =
+                      sinMascara.length <= 9 && sinMascara.length >= 1;
+                    if (isValidLength) {
+                      const mascara = formatRut(e.target.value);
+                      field.onChange(mascara);
+                    }
                   }}
                 />
               )}
