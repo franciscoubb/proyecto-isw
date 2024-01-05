@@ -23,6 +23,11 @@ const pagoSchema = new mongoose.Schema(
       ref: "Cobro",
       required: true,
     },
+    estado: {
+      type: String,
+      enum: ["pendiente", "aprobado", "rechazado"],
+      default: "pendiente",
+    },
   },
   {
     versionKey: false,

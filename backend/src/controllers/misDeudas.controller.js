@@ -6,9 +6,9 @@ const { cobroIdSchema } = require("../schema/cobro.schema.js");
 const Pago = require("../models/pago.model");
 const { pagoBodySchema } = require("../schema/pago.schema.js");
 
-const { enviarMail } = require("../helpers/mailer.js");
-const correoTemplates = require("../helpers/correoTemplates.js");
-const Deudor = require("../models/deudor.model");
+// const { enviarMail } = require("../helpers/mailer.js");
+// const correoTemplates = require("../helpers/correoTemplates.js");
+// const Deudor = require("../models/deudor.model");
 /**
  * Obtiene todos las deudas del usuario autenticado
  * @param {Object} req - Objeto de petición
@@ -55,7 +55,7 @@ async function getMisDeudasByid(req, res) {
 async function createPago(req, res) {
   try {
     const { body } = req;
-    const { id } = req;
+    // const { id } = req;
     const { error: bodyError } = pagoBodySchema.validate(body);
     if (bodyError) return respondError(req, res, 400, bodyError.message);
     const { cobroId, monto, tipo } = req.body;
@@ -85,12 +85,14 @@ async function createPago(req, res) {
     if (saldoPendiente < 0) {
       return respondError(req, res, 404, "monto mayor a deuda pendiente");
     }
-    // actualiza el monto pagado en el cobro
-    cobro.montoPagado = cobro.montoPagado + monto;
-    // actualiza el estado si el saldo pendiente es igual a 0
-    if (cobro.montoPagado === cobro.monto) {
-      cobro.estado = "pagada";
-    }
+    // // actualiza el monto pagado en el cobro
+    // cobro.montoPagado = cobro.montoPagado + monto;
+
+    // // actualiza el estado si el saldo pendiente es igual a 0
+    // if (cobro.montoPagado === cobro.monto) {
+    //   cobro.estado = "pagada";
+    // }
+
     await cobro.save();
     const nuevoPago = new Pago({
       cobroId,
@@ -103,9 +105,9 @@ async function createPago(req, res) {
     }
     respondSuccess(req, res, 201, nuevoPago);
 
-    const deudor = await Deudor.findById({ _id: id });
-    const correo = correoTemplates.nuevoPago(deudor, nuevoPago);
-    enviarMail(deudor.email, correo.asunto, correo.cuerpo);
+    // const deudor = await Deudor.findById({ _id: id });
+    // const correo = correoTemplates.nuevoPago(deudor, nuevoPago);
+    // enviarMail(deudor.email, correo.asunto, correo.cuerpo);
   } catch (error) {
     handleError(error, "misDeudas.controller -> createPago");
     respondError(req, res, 500, "No se creo el pago");

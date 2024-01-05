@@ -11,6 +11,9 @@ const authRoutes = require("./auth.routes.js");
 /** Enrutador de cobros  */
 const cobroRoutes = require("./cobro.routes.js");
 
+/** Enrutado de confirmacion pagos */
+const confirmarPagosRoutes = require("./confirmarPagos.routes.js");
+
 /** Enrutador de datos de deudor */
 const deudorRoutes = require("./deudor.routes.js");
 
@@ -36,6 +39,12 @@ router.use("/auth/deudor", authDeudorRoutes);
 router.use("/deudor", authenticationMiddleware.verifyJWT, deudorRoutes);
 // Define las rutas para cobro /api/cobro
 router.use("/cobro", authenticationMiddleware.verifyJWT, cobroRoutes);
+// Define las rutas para confirmar pago /api/confirmarPagos
+router.use(
+  "/confirmarPagos",
+  authenticationMiddleware.verifyJWT,
+  confirmarPagosRoutes,
+);
 // Define las rutas para los api/deudores
 router.use("/deudores", deudoresRoutes);
 // Exporta el enrutador
