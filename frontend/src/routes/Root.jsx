@@ -44,6 +44,9 @@ function PageRoot() {
               <Nav.Link as={Link} to="/cobros">
                 Deudas
               </Nav.Link>
+              <Nav.Link as={Link} to="/confirmarPagos">
+                Confirmar Pagos
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">

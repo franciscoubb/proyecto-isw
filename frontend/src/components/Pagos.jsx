@@ -26,7 +26,10 @@ const Pagos = () => {
     const fetchData = async () => {
       try {
         const pagosResponse = await getPagosByCobroId(id);
-        setPagos(pagosResponse.pagos);
+        const pagosAceptados = pagosResponse.pagos.filter(
+          (pago) => pago.estado === "aprobado"
+        );
+        setPagos(pagosAceptados);
 
         const cobroResponse = await getCobroById(id);
         setCobro(cobroResponse);

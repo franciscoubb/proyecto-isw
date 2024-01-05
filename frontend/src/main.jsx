@@ -14,6 +14,7 @@ import LoginDeudor from "./routes/LoginDeudor.jsx";
 import DeudorCobroDetalles from "./components/DeudorCobroDetalles.jsx";
 import Pagos from "./components/Pagos.jsx";
 import "../style.css";
+import ConfirmacionPage from "./routes/ConfirmacionPage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/cobros/pagos/:id",
         element: <Pagos />,
+      },
+      {
+        path: "/confirmarPagos",
+        element: <ConfirmacionPage />,
       },
     ],
   },

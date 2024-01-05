@@ -6,7 +6,7 @@ import { createPago } from "../services/deudores.service";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import currencyFormatter from "currency-formatter";
-const PagoDeudorForm = ({ cobro, setCobro }) => {
+const PagoDeudorForm = ({ cobro }) => {
   const navigate = useNavigate();
   const {
     register,
@@ -48,14 +48,14 @@ const PagoDeudorForm = ({ cobro, setCobro }) => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: `Pago exitoso, detalles enviados a ${cobro.deudorId.email}`,
+        title: `Pago recepcionado, debe esperar confirmación de Municipalidad`,
         showConfirmButton: true,
         allowOutsideClick: false,
       });
-      setCobro({
-        ...cobro,
-        montoPagado: cobro.montoPagado + data.monto,
-      });
+      // setCobro({
+      //   ...cobro,
+      //   montoPagado: cobro.montoPagado + data.monto,
+      // });
       navigate("/deudor");
     }, 2000);
   };

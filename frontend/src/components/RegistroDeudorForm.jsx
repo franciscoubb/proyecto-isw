@@ -149,10 +149,23 @@ const RegistroDeudorForm = ({ setDeudores, deudores, show, onHide }) => {
                   },
                   existeRut: (fieldValue) => {
                     if (!deudores) return true;
-                    const rutExists = deudores.some((deudor) =>
-                      compareRuts(fieldValue, deudor.rut)
-                    );
-                    return !rutExists || "RUT ya registrado";
+
+                    const isFieldRutValid = validateRut(fieldValue);
+
+                    if (!isFieldRutValid) {
+                      return "RUT no válido";
+                    }
+
+                    const rutExists = deudores.some((deudor) => {
+                      try {
+                        return compareRuts(fieldValue, deudor.rut);
+                      } catch (error) {
+                        // console.error(error.message);
+                        return false; // Tratar un RUT inválido como no existente en lugar de lanzar una excepción
+                      }
+                    });
+
+                    return rutExists ? "RUT ya registrado" : true;
                   },
                 },
               }}
